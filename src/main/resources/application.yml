@@ -1,6 +1,8 @@
 server:
   port: ${PORT:8080}
 
+base-url: /api
+
 logging:
   level:
     root: INFO
