@@ -1,5 +1,6 @@
 package hexlet.code.app.dto;
 
+import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,10 +8,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginDto {
+public class StatusDto {
 
-    private String email;
-
-    private String password;
+    @NotBlank
+    private String name;
 
 }

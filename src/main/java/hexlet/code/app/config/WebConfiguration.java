@@ -1,7 +1,5 @@
 package hexlet.code.app.config;
 
-import java.io.IOException;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
@@ -9,15 +7,15 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.PathResourceResolver;
 
-import static hexlet.code.app.config.UrlConfig.BASE_URL;
+import java.io.IOException;
 
 @Configuration
 public class WebConfiguration implements WebMvcConfigurer {
 
     private final String baseApiPath;
 
-    public WebConfiguration(@Value(BASE_URL) String baseApiPath) {
-        this.baseApiPath = baseApiPath;
+    public WebConfiguration(@Value("${base-url}") String baseApiPathVar) {
+        this.baseApiPath = baseApiPathVar;
     }
 
     @Override
@@ -41,9 +39,9 @@ public class WebConfiguration implements WebMvcConfigurer {
                         if (resourcePath.startsWith(baseApiPath) || resourcePath.startsWith(baseApiPath.substring(1))) {
                             return null;
                         }
-
                         return location.exists() && location.isReadable() ? location : null;
                     }
                 });
     }
+
 }

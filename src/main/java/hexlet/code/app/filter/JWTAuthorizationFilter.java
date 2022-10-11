@@ -1,31 +1,33 @@
-package hexlet.code.app.security;
+package hexlet.code.app.filter;
 
-import java.io.IOException;
-import java.util.Optional;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import hexlet.code.app.component.JWTHelper;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import static hexlet.code.app.config.UrlConfig.DEFAULT_AUTHORITIES;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Optional;
+
+import static hexlet.code.app.config.security.SecurityConfig.DEFAULT_AUTHORITIES;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_USERNAME_KEY;
 
-public class JWTAuthorizationFilter extends OncePerRequestFilter {
+public final class JWTAuthorizationFilter extends OncePerRequestFilter {
 
     private static final String BEARER = "Bearer";
 
     private final RequestMatcher publicUrls;
     private final JWTHelper jwtHelper;
 
-    public JWTAuthorizationFilter(final RequestMatcher publicUrls,
-                                  final JWTHelper jwtHelper) {
-        this.publicUrls = publicUrls;
-        this.jwtHelper = jwtHelper;
+    public JWTAuthorizationFilter(final RequestMatcher publicUrlsValue,
+                                  final JWTHelper jwtHelperValue) {
+        this.publicUrls = publicUrlsValue;
+        this.jwtHelper = jwtHelperValue;
     }
 
     @Override
@@ -59,4 +61,5 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
                 DEFAULT_AUTHORITIES
         );
     }
+
 }

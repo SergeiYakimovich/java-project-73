@@ -1,13 +1,7 @@
-package hexlet.code.app.security;
+package hexlet.code.app.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import java.util.Map;
-import java.util.stream.Collectors;
-import javax.servlet.FilterChain;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import hexlet.code.app.component.JWTHelper;
 import hexlet.code.app.dto.LoginDto;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -18,7 +12,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
-public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+import javax.servlet.FilterChain;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+public final class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
@@ -26,10 +27,10 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     public JWTAuthenticationFilter(final AuthenticationManager authenticationManager,
                                    final RequestMatcher loginRequest,
-                                   final JWTHelper jwtHelper) {
+                                   final JWTHelper jwtHelperValue) {
         super(authenticationManager);
         super.setRequiresAuthenticationRequestMatcher(loginRequest);
-        this.jwtHelper = jwtHelper;
+        this.jwtHelper = jwtHelperValue;
     }
 
     @Override
@@ -37,7 +38,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                                 final HttpServletResponse response) throws AuthenticationException {
         final LoginDto loginData = getLoginData(request);
         final var authRequest = new UsernamePasswordAuthenticationToken(
-                loginData.getUsername(),
+                loginData.getEmail(),
                 loginData.getPassword()
         );
         setDetails(request, authRequest);

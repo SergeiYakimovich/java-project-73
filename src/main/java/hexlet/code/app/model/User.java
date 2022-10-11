@@ -1,21 +1,22 @@
 package hexlet.code.app.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
-import static javax.persistence.GenerationType.IDENTITY;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Id;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Column;
+import javax.persistence.Temporal;
+import javax.persistence.GenerationType;
+import javax.validation.constraints.NotBlank;
+import java.util.Date;
+
 import static javax.persistence.TemporalType.TIMESTAMP;
 
 @Entity
@@ -27,17 +28,17 @@ import static javax.persistence.TemporalType.TIMESTAMP;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = IDENTITY)
-    private Long id;
-
-    @Column(unique = true)
-    private String email;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
     @NotBlank
     private String firstName;
 
     @NotBlank
     private String lastName;
+
+    @Column(unique = true)
+    private String email;
 
     @NotBlank
     @JsonIgnore
@@ -47,8 +48,8 @@ public class User {
     @Temporal(TIMESTAMP)
     private Date createdAt;
 
-    public User(final Long id) {
-        this.id = id;
+    public User(final Long userId) {
+        this.id = userId;
     }
 
 }
