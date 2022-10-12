@@ -1,6 +1,6 @@
 package hexlet.code.app.repository;
 
-import hexlet.code.app.model.Status;
+import hexlet.code.app.model.Label;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface StatusRepository extends JpaRepository<Status, Long> {
+public interface LabelRepository extends JpaRepository<Label, Long> {
 
-    Optional<Status> findByName(String name);
-    Optional<Status> findById(Long id);
-    List<Status> findAll();
+    Optional<Label> findByName(String name);
+    Optional<Label> findById(Long id);
+    List<Label> findAll();
 
 }

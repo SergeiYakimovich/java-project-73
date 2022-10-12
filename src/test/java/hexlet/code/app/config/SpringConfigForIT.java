@@ -18,10 +18,6 @@ public class SpringConfigForIT {
 
     public static final String TEST_PROFILE = "test";
 
-    /**
-     * Get rest template.
-     * @return      new rest template
-     */
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplateBuilder().build();

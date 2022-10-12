@@ -1,6 +1,5 @@
 package hexlet.code.app.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,12 +7,13 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
-import javax.persistence.Column;
-import javax.persistence.Temporal;
 import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
@@ -22,27 +22,31 @@ import static javax.persistence.TemporalType.TIMESTAMP;
 @Entity
 @Getter
 @Setter
-@Table(name = "users")
+@Table(name = "tasks")
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class Task {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @NotBlank
-    private String firstName;
+    private String name;
 
-    @NotBlank
-    private String lastName;
+    private String description;
 
-    @Column(unique = true)
-    private String email;
+    @ManyToOne
+    private Status taskStatus;
 
-    @NotBlank
-    @JsonIgnore
-    private String password;
+    @ManyToOne
+    private User author;
+
+    @ManyToOne
+    private User executor;
+
+    @ManyToMany
+    private Label label;
 
     @CreationTimestamp
     @Temporal(TIMESTAMP)

@@ -1,17 +1,14 @@
 package hexlet.code.app.controller;
 
-import hexlet.code.app.dto.StatusDto;
-import hexlet.code.app.model.Status;
-import hexlet.code.app.repository.StatusRepository;
-import hexlet.code.app.service.StatusService;
+import hexlet.code.app.dto.TaskDto;
+import hexlet.code.app.model.Task;
+import hexlet.code.app.repository.TaskRepository;
+import hexlet.code.app.service.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import java.util.List;
-import javax.validation.Valid;
-
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,60 +20,62 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import static hexlet.code.app.controller.StatusController.STATUS_CONTROLLER_PATH;
+import javax.validation.Valid;
+import java.util.List;
+
 import static org.springframework.http.HttpStatus.CREATED;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("${base-url}" + STATUS_CONTROLLER_PATH)
-public class StatusController {
+@RequestMapping("${base-url}" + TaskController.TASK_CONTROLLER_PATH)
+public class TaskController {
 
-    public static final String STATUS_CONTROLLER_PATH = "/statuses";
+    public static final String TASK_CONTROLLER_PATH = "/tasks";
     public static final String ID = "/{id}";
 //    private static final String ONLY_OWNER_BY_ID = """
 //            @userRepository.findById(#id).get().getEmail() == authentication.getName()
 //        """;
 
-    private final StatusService statusService;
-//    private final UserRepository userRepository;
-    private final StatusRepository statusRepository;
+    private final TaskService taskService;
+    //    private final UserRepository userRepository;
+    private final TaskRepository taskRepository;
 
-    @Operation(summary = "Create new Status")
-    @ApiResponse(responseCode = "201", description = "Status created")
+    @Operation(summary = "Create new Task")
+    @ApiResponse(responseCode = "201", description = "Task created")
     @PostMapping
     @ResponseStatus(CREATED)
-    public Status registerNewStatus(@RequestBody @Valid final StatusDto dto) {
-        return statusService.createNewStatus(dto);
+    public Task registerNewTask(@RequestBody @Valid final TaskDto dto) {
+        return taskService.createNewTask(dto);
     }
 
     // Content используется для укзания содержимого ответа
     @ApiResponses(@ApiResponse(responseCode = "200", content =
             // Указываем тип содержимого ответа
-    @Content(schema = @Schema(implementation = Status.class))
+    @Content(schema = @Schema(implementation = Task.class))
     ))
     @GetMapping
-    public List<Status> getAllStatuses() {
-        return statusRepository.findAll()
+    public List<Task> getAllTasks() {
+        return taskRepository.findAll()
                 .stream()
                 .toList();
     }
 
     @ApiResponses(@ApiResponse(responseCode = "200"))
     @GetMapping(ID)
-    public Status getStatusById(@PathVariable final Long id) {
-        return statusRepository.findById(id).get();
+    public Task getTaskById(@PathVariable final Long id) {
+        return taskRepository.findById(id).get();
     }
 
     @PutMapping(ID)
 //    @PreAuthorize(ONLY_OWNER_BY_ID)
-    public Status updateStatus(@PathVariable final long id, @RequestBody @Valid final StatusDto dto) {
-        return statusService.updateStatus(id, dto);
+    public Task updateTask(@PathVariable final long id, @RequestBody @Valid final TaskDto dto) {
+        return taskService.updateTask(id, dto);
     }
 
     @DeleteMapping(ID)
 //    @PreAuthorize(ONLY_OWNER_BY_ID)
-    public void deleteStatus(@PathVariable final long id) {
-        statusRepository.deleteById(id);
+    public void deleteTask(@PathVariable final long id) {
+        taskRepository.deleteById(id);
     }
 
 }

@@ -14,17 +14,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @AutoConfigureMockMvc
 @Transactional
 class AppApplicationTests {
-	@Autowired
-	private MockMvc mockMvc;
-	@Test
-	void testWelcomePage() throws Exception {
+    @Autowired
+    private MockMvc mockMvc;
+    @Test
+    void testRootPage() throws Exception {
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/welcome"))
+				.perform(get("/"))
 				.andReturn()
 				.getResponse();
 
 		assertThat(response.getStatus()).isEqualTo(200);
-		assertThat(response.getContentAsString()).contains("Welcome to Spring");
+		assertThat(response.getContentAsString()).contains("Менеджер задач");
 	}
 
 }

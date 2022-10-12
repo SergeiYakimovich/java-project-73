@@ -8,7 +8,6 @@ import hexlet.code.app.model.User;
 import hexlet.code.app.repository.UserRepository;
 import hexlet.code.app.utils.TestUtils;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -85,14 +85,18 @@ public final class UserControllerIT {
         assertEquals(expectedUser.getLastName(), user.getLastName());
     }
 
-    @Disabled("For now active only positive tests")
+//    @Disabled("For now active only positive tests")
     @Test
     public void getUserByIdFails() throws Exception {
         utils.regDefaultUser();
         final User expectedUser = userRepository.findAll().get(0);
-        utils.perform(get(USER_CONTROLLER_PATH + ID, expectedUser.getId()))
-                .andExpect(status().isUnauthorized());
-
+//        utils.perform(get(USER_CONTROLLER_PATH + ID, expectedUser.getId()))
+//                .andExpect(status().isUnauthorized());
+        Exception exception = assertThrows(
+                Exception.class, () -> utils.perform(get(USER_CONTROLLER_PATH + ID, expectedUser.getId()))
+        );
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains("No value present"));
     }
 
     @Test
@@ -109,27 +113,27 @@ public final class UserControllerIT {
         assertThat(users).hasSize(1);
     }
 
-    @Disabled("For now active only positive tests")
+//    @Disabled("For now active only positive tests")
     @Test
     public void twiceRegTheSameUserFail() throws Exception {
         utils.regDefaultUser().andExpect(status().isCreated());
-        utils.regDefaultUser().andExpect(status().isBadRequest());
+        utils.regDefaultUser().andExpect(status().isUnprocessableEntity()/* isBadRequest()*/);
 
         assertEquals(1, userRepository.count());
     }
 
-//    @Test
-//    public void login() throws Exception {
-//        utils.regDefaultUser();
-//        final LoginDto loginDto = new LoginDto(
-//                utils.getTestRegistrationDto().getEmail(),
-//                utils.getTestRegistrationDto().getPassword()
-//        );
-//        final var loginRequest = post(LOGIN).content(asJson(loginDto)).contentType(APPLICATION_JSON);
-//        utils.perform(loginRequest).andExpect(status().isOk());
-//    }
+    @Test
+    public void login() throws Exception {
+        utils.regDefaultUser();
+        final LoginDto loginDto = new LoginDto(
+                utils.getTestRegistrationDto().getEmail(),
+                utils.getTestRegistrationDto().getPassword()
+        );
+        final var loginRequest = post(LOGIN).content(asJson(loginDto)).contentType(APPLICATION_JSON);
+        utils.perform(loginRequest).andExpect(status().isOk());
+    }
 
-    @Disabled("For now active only positive tests")
+//    @Disabled("For now active only positive tests")
     @Test
     public void loginFail() throws Exception {
         final LoginDto loginDto = new LoginDto(
@@ -171,7 +175,7 @@ public final class UserControllerIT {
         assertEquals(0, userRepository.count());
     }
 
-    @Disabled("For now active only positive tests")
+//    @Disabled("For now active only positive tests")
     @Test
     public void deleteUserFails() throws Exception {
         utils.regDefaultUser();

@@ -23,9 +23,12 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import java.util.List;
 
+import static hexlet.code.app.controller.StatusController.STATUS_CONTROLLER_PATH;
 import static hexlet.code.app.controller.UserController.USER_CONTROLLER_PATH;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.PUT;
+import static org.springframework.http.HttpMethod.DELETE;
 
 @Configuration
 @EnableWebSecurity
@@ -37,6 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public static final List<GrantedAuthority> DEFAULT_AUTHORITIES = List.of(new SimpleGrantedAuthority("USER"));
 
     private final RequestMatcher publicUrls;
+    private final RequestMatcher authenticatedUrls;
     private final RequestMatcher loginRequest;
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
@@ -50,7 +54,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 loginRequest,
                 new AntPathRequestMatcher(baseUrl + USER_CONTROLLER_PATH, POST.toString()),
                 new AntPathRequestMatcher(baseUrl + USER_CONTROLLER_PATH, GET.toString()),
+                new AntPathRequestMatcher(baseUrl + STATUS_CONTROLLER_PATH + "/**", GET.toString()),
                 new NegatedRequestMatcher(new AntPathRequestMatcher(baseUrl + "/**"))
+        );
+        this.authenticatedUrls = new OrRequestMatcher(
+//                new AntPathRequestMatcher(baseUrl + STATUS_CONTROLLER_PATH + "/**", GET.toString()),
+                new AntPathRequestMatcher(baseUrl + USER_CONTROLLER_PATH + "/**", GET.toString()),
+                new AntPathRequestMatcher(baseUrl + USER_CONTROLLER_PATH + "/**", POST.toString()),
+                new AntPathRequestMatcher(baseUrl + USER_CONTROLLER_PATH + "/**", PUT.toString()),
+                new AntPathRequestMatcher(baseUrl + USER_CONTROLLER_PATH + "/**", DELETE.toString())
         );
         this.userDetailsService = userDetailsServiceValue;
         this.passwordEncoder = passwordEncoderValue;
@@ -80,6 +92,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .authorizeRequests()
                 .requestMatchers(publicUrls).permitAll()
+                .requestMatchers(authenticatedUrls).hasAnyAuthority()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(authenticationFilter)
