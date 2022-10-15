@@ -3,6 +3,7 @@ package hexlet.code.app.service;
 import hexlet.code.app.dto.LabelDto;
 import hexlet.code.app.model.Label;
 import hexlet.code.app.repository.LabelRepository;
+import hexlet.code.app.service.interfaces.LabelService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

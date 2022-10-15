@@ -1,4 +1,4 @@
-package hexlet.code.app.service;
+package hexlet.code.app.service.interfaces;
 
 
 import hexlet.code.app.dto.TaskDto;

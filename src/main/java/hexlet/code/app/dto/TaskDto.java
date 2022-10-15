@@ -1,15 +1,19 @@
 package hexlet.code.app.dto;
 
-import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
-import hexlet.code.app.model.Status;
-import hexlet.code.app.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.Set;
 
 @Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class TaskDto {
@@ -19,10 +23,11 @@ public class TaskDto {
 
     private String description;
 
-    @ManyToOne
-    private Status taskStatus;
+    @NotNull
+    private Long taskStatusId;
 
-    @ManyToOne
-    private User executor;
+    private Set<Long> labelIds;
+
+    private Long executorId;
 
 }

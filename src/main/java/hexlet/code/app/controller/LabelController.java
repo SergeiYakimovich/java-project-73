@@ -3,12 +3,13 @@ package hexlet.code.app.controller;
 import hexlet.code.app.dto.LabelDto;
 import hexlet.code.app.model.Label;
 import hexlet.code.app.repository.LabelRepository;
-import hexlet.code.app.service.LabelService;
+import hexlet.code.app.service.interfaces.LabelService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import liquibase.repackaged.org.apache.commons.collections4.CollectionUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,6 +55,7 @@ public class LabelController {
     @Content(schema = @Schema(implementation = Label.class))
     ))
     @GetMapping
+    @Operation(summary = "Get all labels")
     public List<Label> getAllLabels() {
         return labelRepository.findAll()
                 .stream()
@@ -62,19 +64,26 @@ public class LabelController {
 
     @ApiResponses(@ApiResponse(responseCode = "200"))
     @GetMapping(ID)
+    @Operation(summary = "Get label")
     public Label getLabelById(@PathVariable final Long id) {
         return labelRepository.findById(id).get();
     }
 
     @PutMapping(ID)
+    @Operation(summary = "Update label")
 //    @PreAuthorize(ONLY_OWNER_BY_ID)
     public Label updateLabel(@PathVariable final long id, @RequestBody @Valid final LabelDto dto) {
         return labelService.updateLabel(id, dto);
     }
 
     @DeleteMapping(ID)
+    @Operation(summary = "Delete label")
 //    @PreAuthorize(ONLY_OWNER_BY_ID)
-    public void deleteLabel(@PathVariable final long id) {
+    public void deleteLabel(@PathVariable final long id) throws Exception {
+        final Label label = labelRepository.findById(id).get();
+        if (!CollectionUtils.isEmpty(label.getTasks())) {
+            throw new Exception("Нельзя удалить, т.к. используется в задачах");
+        }
         labelRepository.deleteById(id);
     }
 

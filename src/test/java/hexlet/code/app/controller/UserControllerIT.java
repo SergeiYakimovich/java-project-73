@@ -8,6 +8,7 @@ import hexlet.code.app.model.User;
 import hexlet.code.app.repository.UserRepository;
 import hexlet.code.app.utils.TestUtils;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +54,7 @@ public final class UserControllerIT {
     @Autowired
     private TestUtils utils;
 
-    @AfterEach
+    @BeforeEach
     public void clear() {
         utils.tearDown();
     }

@@ -2,9 +2,9 @@ package hexlet.code.app.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import hexlet.code.app.config.SpringConfigForIT;
-import hexlet.code.app.dto.StatusDto;
-import hexlet.code.app.model.Status;
-import hexlet.code.app.repository.StatusRepository;
+import hexlet.code.app.dto.TaskStatusDto;
+import hexlet.code.app.model.TaskStatus;
+import hexlet.code.app.repository.TaskStatusRepository;
 import hexlet.code.app.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.util.List;
 
 import static hexlet.code.app.config.SpringConfigForIT.TEST_PROFILE;
-import static hexlet.code.app.controller.StatusController.STATUS_CONTROLLER_PATH;
+import static hexlet.code.app.controller.TaskStatusController.STATUS_CONTROLLER_PATH;
 import static hexlet.code.app.controller.UserController.ID;
 import static hexlet.code.app.utils.TestUtils.TEST_USERNAME;
 import static hexlet.code.app.utils.TestUtils.asJson;
@@ -45,12 +45,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = SpringConfigForIT.class)
 
-public class StatusControllerTest {
+public class TaskTaskStatusControllerTest {
 
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private StatusRepository statusRepository;
+    private TaskStatusRepository taskStatusRepository;
 
     @Autowired
     private TestUtils utils;
@@ -65,15 +65,15 @@ public class StatusControllerTest {
     public static final String TEST_STATUSNAME = "new";
     public static final String TEST_STATUSNAME_2 = "new2";
 
-    private final StatusDto testRegStatusDto = new StatusDto(
+    private final TaskStatusDto testRegTaskStatusDto = new TaskStatusDto(
             TEST_STATUSNAME
     );
 
     public ResultActions regDefaultStatus(final String byUser) throws Exception {
-        return regStatus(testRegStatusDto, byUser);
+        return regStatus(testRegTaskStatusDto, byUser);
     }
 
-    public ResultActions regStatus(final StatusDto dto, final String byUser) throws Exception {
+    public ResultActions regStatus(final TaskStatusDto dto, final String byUser) throws Exception {
         final var request = post(STATUS_CONTROLLER_PATH)
                 .content(asJson(dto))
                 .contentType(APPLICATION_JSON);
@@ -83,28 +83,28 @@ public class StatusControllerTest {
 
     @Test
     public void registration() throws Exception {
-        assertEquals(0, statusRepository.count());
+        assertEquals(0, taskStatusRepository.count());
         utils.regDefaultUser();
         regDefaultStatus(TEST_USERNAME).andExpect(status().isCreated());
-        assertEquals(1, statusRepository.count());
+        assertEquals(1, taskStatusRepository.count());
     }
 
     @Test
     public void getStatusById() throws Exception {
         utils.regDefaultUser();
         regDefaultStatus(TEST_USERNAME);
-        final Status expectedStatus = statusRepository.findAll().get(0);
+        final TaskStatus expectedTaskStatus = taskStatusRepository.findAll().get(0);
         final var response = utils.perform(
-                        get(STATUS_CONTROLLER_PATH + ID, expectedStatus.getId(), TEST_USERNAME)
+                        get(STATUS_CONTROLLER_PATH + ID, expectedTaskStatus.getId(), TEST_USERNAME)
                 ).andExpect(status().isOk())
                 .andReturn()
                 .getResponse();
 
-        final Status status = fromJson(response.getContentAsString(), new TypeReference<>() {
+        final TaskStatus taskStatus = fromJson(response.getContentAsString(), new TypeReference<>() {
         });
 
-        assertEquals(expectedStatus.getId(), status.getId());
-        assertEquals(expectedStatus.getName(), status.getName());
+        assertEquals(expectedTaskStatus.getId(), taskStatus.getId());
+        assertEquals(expectedTaskStatus.getName(), taskStatus.getName());
     }
 
 //    @Disabled("For now active only positive tests")
@@ -127,10 +127,10 @@ public class StatusControllerTest {
                 .andReturn()
                 .getResponse();
 
-        final List<Status> statuses = fromJson(response.getContentAsString(), new TypeReference<>() {
+        final List<TaskStatus> taskStatuses = fromJson(response.getContentAsString(), new TypeReference<>() {
         });
 
-        assertThat(statuses).hasSize(1);
+        assertThat(taskStatuses).hasSize(1);
     }
 
 //    @Disabled("For now active only positive tests")
@@ -148,9 +148,9 @@ public class StatusControllerTest {
         utils.regDefaultUser();
         regDefaultStatus(TEST_USERNAME);
 
-        final Long statusId = statusRepository.findAll().get(0).getId();
+        final Long statusId = taskStatusRepository.findAll().get(0).getId();
 
-        final var statusDto = new StatusDto(TEST_STATUSNAME_2);
+        final var statusDto = new TaskStatusDto(TEST_STATUSNAME_2);
 
         final var updateRequest = put(STATUS_CONTROLLER_PATH + ID, statusId)
                 .content(asJson(statusDto))
@@ -158,9 +158,9 @@ public class StatusControllerTest {
 
         utils.perform(updateRequest, TEST_USERNAME).andExpect(status().isOk());
 
-        assertTrue(statusRepository.existsById(statusId));
-        assertNull(statusRepository.findByName(TEST_STATUSNAME).orElse(null));
-        assertNotNull(statusRepository.findByName(TEST_STATUSNAME_2).orElse(null));
+        assertTrue(taskStatusRepository.existsById(statusId));
+        assertNull(taskStatusRepository.findByName(TEST_STATUSNAME).orElse(null));
+        assertNotNull(taskStatusRepository.findByName(TEST_STATUSNAME_2).orElse(null));
     }
 
     @Test
@@ -168,12 +168,12 @@ public class StatusControllerTest {
         utils.regDefaultUser();
         regDefaultStatus(TEST_USERNAME);
 
-        final Long statusId = statusRepository.findAll().get(0).getId();
+        final Long statusId = taskStatusRepository.findAll().get(0).getId();
 
         utils.perform(delete(STATUS_CONTROLLER_PATH + ID, statusId), TEST_USERNAME)
                 .andExpect(status().isOk());
 
-        assertEquals(0, statusRepository.count());
+        assertEquals(0, taskStatusRepository.count());
     }
 
 //    @Disabled("For now active only positive tests")

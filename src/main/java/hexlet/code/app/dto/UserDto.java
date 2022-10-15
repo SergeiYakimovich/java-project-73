@@ -12,8 +12,8 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDto {
-    private static final int MIN_V = 3;
-    private static final int MAX_V = 100;
+    private static final int MIN = 3;
+    private static final int MAX = 100;
 
     @NotBlank
     @Email
@@ -26,7 +26,7 @@ public class UserDto {
     private String lastName;
 
     @NotBlank
-    @Size(min = MIN_V, max = MAX_V)
+    @Size(min = MIN, max = MAX)
     private String password;
 
 }
