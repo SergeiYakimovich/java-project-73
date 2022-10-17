@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
 import javax.validation.Valid;
-
 import liquibase.repackaged.org.apache.commons.collections4.CollectionUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
 import static hexlet.code.app.controller.TaskStatusController.STATUS_CONTROLLER_PATH;
 import static org.springframework.http.HttpStatus.CREATED;
 
@@ -34,12 +32,8 @@ public class TaskStatusController {
 
     public static final String STATUS_CONTROLLER_PATH = "/statuses";
     public static final String ID = "/{id}";
-//    private static final String ONLY_OWNER_BY_ID = """
-//            @userRepository.findById(#id).get().getEmail() == authentication.getName()
-//        """;
 
     private final TaskStatusService taskStatusService;
-//    private final UserRepository userRepository;
     private final TaskStatusRepository taskStatusRepository;
 
     @Operation(summary = "Create new Status")
@@ -72,14 +66,12 @@ public class TaskStatusController {
 
     @PutMapping(ID)
     @Operation(summary = "Update status")
-//    @PreAuthorize(ONLY_OWNER_BY_ID)
     public TaskStatus updateStatus(@PathVariable final long id, @RequestBody @Valid final TaskStatusDto dto) {
         return taskStatusService.updateStatus(id, dto);
     }
 
     @Operation(summary = "Delete status")
     @DeleteMapping(ID)
-//    @PreAuthorize(ONLY_OWNER_BY_ID)
     public void deleteStatus(@PathVariable final long id) throws Exception {
         final TaskStatus taskStatus = taskStatusRepository.findById(id).get();
         if (!CollectionUtils.isEmpty(taskStatus.getTasks())) {

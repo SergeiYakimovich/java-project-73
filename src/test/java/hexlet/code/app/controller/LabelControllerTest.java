@@ -2,9 +2,10 @@ package hexlet.code.app.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import hexlet.code.app.config.SpringConfigForIT;
-import hexlet.code.app.dto.TaskStatusDto;
+import hexlet.code.app.dto.LabelDto;
+import hexlet.code.app.model.Label;
 import hexlet.code.app.model.TaskStatus;
-import hexlet.code.app.repository.TaskStatusRepository;
+import hexlet.code.app.repository.LabelRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,11 +17,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import hexlet.code.app.utils.TestUtils;
 import java.util.List;
 import static hexlet.code.app.config.SpringConfigForIT.TEST_PROFILE;
-import static hexlet.code.app.controller.TaskStatusController.STATUS_CONTROLLER_PATH;
+import static hexlet.code.app.controller.LabelController.LABEL_CONTROLLER_PATH;
 import static hexlet.code.app.controller.UserController.ID;
 import static hexlet.code.app.utils.TestUtils.BASE_URL;
-import static hexlet.code.app.utils.TestUtils.TEST_STATUSNAME;
-import static hexlet.code.app.utils.TestUtils.TEST_STATUSNAME_2;
+import static hexlet.code.app.utils.TestUtils.TEST_LABELNAME;
+import static hexlet.code.app.utils.TestUtils.TEST_LABELNAME_2;
 import static hexlet.code.app.utils.TestUtils.TEST_USERNAME;
 import static hexlet.code.app.utils.TestUtils.asJson;
 import static hexlet.code.app.utils.TestUtils.fromJson;
@@ -42,10 +43,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = SpringConfigForIT.class)
 
-public class TaskStatusControllerTest {
+public class LabelControllerTest {
 
     @Autowired
-    private TaskStatusRepository taskStatusRepository;
+    private LabelRepository labelRepository;
 
     @Autowired
     private TestUtils utils;
@@ -57,102 +58,103 @@ public class TaskStatusControllerTest {
 
     @Test
     public void registration() throws Exception {
-        assertEquals(0, taskStatusRepository.count());
+        assertEquals(0, labelRepository.count());
         utils.regDefaultUser();
-        utils.regDefaultStatus(TEST_USERNAME).andExpect(status().isCreated());
-        assertEquals(1, taskStatusRepository.count());
+        utils.regDefaultLabel(TEST_USERNAME).andExpect(status().isCreated());
+        assertEquals(1, labelRepository.count());
     }
 
     @Test
-    public void getStatusById() throws Exception {
+    public void getLabelById() throws Exception {
         utils.regDefaultUser();
-        utils.regDefaultStatus(TEST_USERNAME);
-        final TaskStatus expectedTaskStatus = taskStatusRepository.findAll().get(0);
+        utils.regDefaultLabel(TEST_USERNAME);
+        final Label expectedLabel = labelRepository.findAll().get(0);
         final var response = utils.perform(
-                        get(BASE_URL + STATUS_CONTROLLER_PATH + ID, expectedTaskStatus.getId()), TEST_USERNAME)
+                        get(BASE_URL + LABEL_CONTROLLER_PATH + ID, expectedLabel.getId()), TEST_USERNAME)
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse();
 
         final TaskStatus taskStatus = fromJson(response.getContentAsString(), new TypeReference<>() {
         });
-        assertEquals(expectedTaskStatus.getId(), taskStatus.getId());
-        assertEquals(expectedTaskStatus.getName(), taskStatus.getName());
+
+        assertEquals(expectedLabel.getId(), taskStatus.getId());
+        assertEquals(expectedLabel.getName(), taskStatus.getName());
     }
 
     @Test
-    public void getStatusByIdFails() throws Exception {
+    public void getLabelByIdFails() throws Exception {
         utils.regDefaultUser();
-        utils.regDefaultStatus(TEST_USERNAME);
-        final TaskStatus expectedStatus = taskStatusRepository.findAll().get(0);
-
+        utils.regDefaultLabel(TEST_USERNAME);
+        final Label expectedLabel = labelRepository.findAll().get(0);
         Exception exception = assertThrows(
-                Exception.class, () -> utils.perform(get(BASE_URL + STATUS_CONTROLLER_PATH + ID,
-                        expectedStatus.getId()))
+                Exception.class, () -> utils.perform(get(BASE_URL + LABEL_CONTROLLER_PATH + ID,
+                        expectedLabel.getId()))
         );
         String message = exception.getMessage();
         assertTrue(message.contains("No value present"));
     }
 
     @Test
-    public void getAllStatuses() throws Exception {
+    public void getAllLabels() throws Exception {
         utils.regDefaultUser();
-        utils.regDefaultStatus(TEST_USERNAME);
-        final var response = utils.perform(get(BASE_URL + STATUS_CONTROLLER_PATH), TEST_USERNAME)
+        utils.regDefaultLabel(TEST_USERNAME);
+        final var response = utils.perform(get(BASE_URL + LABEL_CONTROLLER_PATH), TEST_USERNAME)
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse();
 
-        final List<TaskStatus> taskStatuses = fromJson(response.getContentAsString(), new TypeReference<>() {
+        final List<Label> labels = fromJson(response.getContentAsString(), new TypeReference<>() {
         });
-        assertThat(taskStatuses).hasSize(1);
+        assertThat(labels).hasSize(1);
     }
 
     @Test
-    public void twiceRegTheSameStatusFail() throws Exception {
+    public void twiceRegTheSameLabelFail() throws Exception {
         utils.regDefaultUser();
-        utils.regDefaultStatus(TEST_USERNAME).andExpect(status().isCreated());
-        utils.regDefaultStatus(TEST_USERNAME).andExpect(status().isUnprocessableEntity());
+        utils.regDefaultLabel(TEST_USERNAME).andExpect(status().isCreated());
+        utils.regDefaultLabel(TEST_USERNAME).andExpect(status().isUnprocessableEntity());
 
-        assertEquals(1, taskStatusRepository.count());
+        assertEquals(1, labelRepository.count());
     }
 
     @Test
-    public void updateStatus() throws Exception {
+    public void updateLabel() throws Exception {
         utils.regDefaultUser();
-        utils.regDefaultStatus(TEST_USERNAME);
-        final Long statusId = taskStatusRepository.findAll().get(0).getId();
-        final var statusDto = new TaskStatusDto(TEST_STATUSNAME_2);
-        final var updateRequest = put(BASE_URL + STATUS_CONTROLLER_PATH + ID, statusId)
-                .content(asJson(statusDto))
+        utils.regDefaultLabel(TEST_USERNAME);
+        final Long labelId = labelRepository.findAll().get(0).getId();
+        final var labelDto = new LabelDto(TEST_LABELNAME_2);
+
+        final var updateRequest = put(BASE_URL + LABEL_CONTROLLER_PATH + ID,
+                labelId)
+                .content(asJson(labelDto))
                 .contentType(APPLICATION_JSON);
 
         utils.perform(updateRequest, TEST_USERNAME).andExpect(status().isOk());
-        assertTrue(taskStatusRepository.existsById(statusId));
-        assertNull(taskStatusRepository.findByName(TEST_STATUSNAME).orElse(null));
-        assertNotNull(taskStatusRepository.findByName(TEST_STATUSNAME_2).orElse(null));
+        assertTrue(labelRepository.existsById(labelId));
+        assertNull(labelRepository.findByName(TEST_LABELNAME).orElse(null));
+        assertNotNull(labelRepository.findByName(TEST_LABELNAME_2).orElse(null));
     }
 
     @Test
-    public void deleteStatus() throws Exception {
+    public void deleteLabel() throws Exception {
         utils.regDefaultUser();
-        utils.regDefaultStatus(TEST_USERNAME);
-        final Long statusId = taskStatusRepository.findAll().get(0).getId();
+        utils.regDefaultLabel(TEST_USERNAME);
+        final Long labelId = labelRepository.findAll().get(0).getId();
 
-        utils.perform(delete(BASE_URL + STATUS_CONTROLLER_PATH + ID, statusId), TEST_USERNAME)
+        utils.perform(delete(BASE_URL + LABEL_CONTROLLER_PATH + ID, labelId), TEST_USERNAME)
                 .andExpect(status().isOk());
-        assertEquals(0, taskStatusRepository.count());
+        assertEquals(0, labelRepository.count());
     }
 
     @Test
-    public void deleteStatusFails() throws Exception {
+    public void deleteLabelFails() throws Exception {
         utils.regDefaultUser();
-        utils.regDefaultStatus(TEST_USERNAME);
-        final Long statusId = taskStatusRepository.findAll().get(0).getId() + 1;
-
-        utils.perform(delete(BASE_URL + STATUS_CONTROLLER_PATH + ID, statusId), TEST_USERNAME)
+        utils.regDefaultLabel(TEST_USERNAME);
+        final Long labelId = labelRepository.findAll().get(0).getId() + 1;
+        utils.perform(delete(BASE_URL + LABEL_CONTROLLER_PATH + ID, labelId), TEST_USERNAME)
                 .andExpect(status().isNotFound());
-        assertEquals(1, taskStatusRepository.count());
+        assertEquals(1, labelRepository.count());
     }
 
 }

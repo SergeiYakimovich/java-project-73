@@ -21,11 +21,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.validation.Valid;
 import java.util.List;
 import com.querydsl.core.types.Predicate;
-
 import static org.springframework.http.HttpStatus.CREATED;
 
 @AllArgsConstructor
@@ -38,7 +36,6 @@ public class TaskController {
     private static final String TASK_OWNER =
             "@taskRepository.findById(#id).get().getAuthor().getEmail() == authentication.getName()";
     private final TaskService taskService;
-    //    private final UserRepository userRepository;
     private final TaskRepository taskRepository;
 
     @Operation(summary = "Create new Task")
@@ -49,9 +46,7 @@ public class TaskController {
         return taskService.createNewTask(dto);
     }
 
-    // Content используется для укзания содержимого ответа
     @ApiResponses(@ApiResponse(responseCode = "200", content =
-            // Указываем тип содержимого ответа
     @Content(schema = @Schema(implementation = Task.class))
     ))
     @GetMapping

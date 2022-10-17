@@ -5,7 +5,6 @@ import hexlet.code.app.dto.UserDto;
 import hexlet.code.app.model.User;
 import hexlet.code.app.repository.UserRepository;
 import hexlet.code.app.service.interfaces.UserService;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import lombok.AllArgsConstructor;
 import javax.validation.Valid;
 import java.util.List;
-
 import static hexlet.code.app.controller.UserController.USER_CONTROLLER_PATH;
 import static org.springframework.http.HttpStatus.CREATED;
 

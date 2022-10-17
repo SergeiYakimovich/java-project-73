@@ -20,10 +20,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.validation.Valid;
 import java.util.List;
-
 import static org.springframework.http.HttpStatus.CREATED;
 
 @AllArgsConstructor
@@ -33,12 +31,7 @@ public class LabelController {
 
     public static final String LABEL_CONTROLLER_PATH = "/labels";
     public static final String ID = "/{id}";
-//    private static final String ONLY_OWNER_BY_ID = """
-//            @userRepository.findById(#id).get().getEmail() == authentication.getName()
-//        """;
-
     private final LabelService labelService;
-    //    private final UserRepository userRepository;
     private final LabelRepository labelRepository;
 
     @Operation(summary = "Create new Label")
@@ -71,14 +64,12 @@ public class LabelController {
 
     @PutMapping(ID)
     @Operation(summary = "Update label")
-//    @PreAuthorize(ONLY_OWNER_BY_ID)
     public Label updateLabel(@PathVariable final long id, @RequestBody @Valid final LabelDto dto) {
         return labelService.updateLabel(id, dto);
     }
 
     @DeleteMapping(ID)
     @Operation(summary = "Delete label")
-//    @PreAuthorize(ONLY_OWNER_BY_ID)
     public void deleteLabel(@PathVariable final long id) throws Exception {
         final Label label = labelRepository.findById(id).get();
         if (!CollectionUtils.isEmpty(label.getTasks())) {

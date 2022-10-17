@@ -9,7 +9,6 @@ import org.springframework.data.querydsl.binding.QuerydslBindings;
 import org.springframework.stereotype.Repository;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.SimpleExpression;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +23,6 @@ public interface TaskRepository extends JpaRepository<Task, Long>,
 
     @Override
     default void customize(QuerydslBindings bindings, QTask task) {
-
         bindings.bind(task.taskStatus.id).first(SimpleExpression::eq);
         bindings.bind(task.executor.id).first(SimpleExpression::eq);
         bindings.bind(task.labels.any().id).first((SimpleExpression::eq));

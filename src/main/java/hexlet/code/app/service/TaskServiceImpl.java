@@ -5,7 +5,6 @@ import hexlet.code.app.model.Label;
 import hexlet.code.app.model.Task;
 import hexlet.code.app.model.TaskStatus;
 import hexlet.code.app.model.User;
-import hexlet.code.app.repository.TaskStatusRepository;
 import hexlet.code.app.repository.TaskRepository;
 import hexlet.code.app.service.interfaces.TaskService;
 import hexlet.code.app.service.interfaces.UserService;
@@ -13,10 +12,8 @@ import liquibase.repackaged.org.apache.commons.collections4.CollectionUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Set;
 import java.util.stream.Collectors;
-
 
 @Service
 @Transactional
@@ -24,7 +21,6 @@ import java.util.stream.Collectors;
 public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;
-    private final TaskStatusRepository taskStatusRepository;
     private final UserService userService;
 
     @Override

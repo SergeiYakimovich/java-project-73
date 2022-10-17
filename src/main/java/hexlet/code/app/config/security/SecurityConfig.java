@@ -3,7 +3,6 @@ package hexlet.code.app.config.security;
 import hexlet.code.app.component.JWTHelper;
 import hexlet.code.app.filter.JWTAuthenticationFilter;
 import hexlet.code.app.filter.JWTAuthorizationFilter;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -20,9 +19,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
-
 import java.util.List;
-
 import static hexlet.code.app.controller.UserController.USER_CONTROLLER_PATH;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
@@ -37,7 +34,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public static final List<GrantedAuthority> DEFAULT_AUTHORITIES = List.of(new SimpleGrantedAuthority("USER"));
 
     private final RequestMatcher publicUrls;
-//    private final RequestMatcher authenticatedUrls;
     private final RequestMatcher loginRequest;
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
