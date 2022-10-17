@@ -15,11 +15,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
 
 import static hexlet.code.config.security.SecurityConfig.LOGIN;
+import static hexlet.code.controller.UserController.ID;
+import static hexlet.code.controller.UserController.USER_CONTROLLER_PATH;
 import static hexlet.code.utils.TestUtils.BASE_URL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -68,7 +69,7 @@ public final class UserControllerIT {
         utils.regDefaultUser();
         final User expectedUser = userRepository.findAll().get(0);
         final var response = utils.perform(
-                        get(BASE_URL + UserController.USER_CONTROLLER_PATH + UserController.ID, expectedUser.getId()),
+                        get(BASE_URL + USER_CONTROLLER_PATH + ID, expectedUser.getId()),
                         expectedUser.getEmail()
                 ).andExpect(status().isOk())
                 .andReturn()
@@ -91,16 +92,17 @@ public final class UserControllerIT {
 //        utils.perform(get(BASE_URL + USER_CONTROLLER_PATH + ID, expectedUser.getId()))
 //                .andExpect(status().isUnauthorized());
         Exception exception = assertThrows(
-                Exception.class, () -> utils.perform(get(BASE_URL + UserController.USER_CONTROLLER_PATH + UserController.ID, expectedUser.getId()))
+                Exception.class, () -> utils.perform(get(BASE_URL + USER_CONTROLLER_PATH + ID,
+                        expectedUser.getId()))
         );
-        String actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains("No value present"));
+        String message = exception.getMessage();
+        assertTrue(message.contains("No value present"));
     }
 
     @Test
     public void getAllUsers() throws Exception {
         utils.regDefaultUser();
-        final var response = utils.perform(MockMvcRequestBuilders.get(BASE_URL + UserController.USER_CONTROLLER_PATH))
+        final var response = utils.perform(get(BASE_URL + USER_CONTROLLER_PATH))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse();
@@ -125,7 +127,8 @@ public final class UserControllerIT {
                 utils.getTestRegistrationDto().getEmail(),
                 utils.getTestRegistrationDto().getPassword()
         );
-        final var loginRequest = post(BASE_URL + LOGIN).content(asJson(loginDto)).contentType(APPLICATION_JSON);
+        final var loginRequest =
+                post(BASE_URL + LOGIN).content(asJson(loginDto)).contentType(APPLICATION_JSON);
         utils.perform(loginRequest).andExpect(status().isOk());
     }
 
@@ -135,7 +138,8 @@ public final class UserControllerIT {
                 utils.getTestRegistrationDto().getEmail(),
                 utils.getTestRegistrationDto().getPassword()
         );
-        final var loginRequest = post(BASE_URL + LOGIN).content(asJson(loginDto)).contentType(APPLICATION_JSON);
+        final var loginRequest =
+                post(BASE_URL + LOGIN).content(asJson(loginDto)).contentType(APPLICATION_JSON);
         utils.perform(loginRequest).andExpect(status().isUnauthorized());
     }
 
@@ -143,8 +147,10 @@ public final class UserControllerIT {
     public void updateUser() throws Exception {
         utils.regDefaultUser();
         final Long userId = userRepository.findByEmail(TEST_USERNAME).get().getId();
-        final var userDto = new UserDto(TEST_USERNAME_2, "new name", "new last name", "new pwd");
-        final var updateRequest = MockMvcRequestBuilders.put(BASE_URL + UserController.USER_CONTROLLER_PATH + UserController.ID, userId)
+        final var userDto = new UserDto(
+                TEST_USERNAME_2, "new name", "new last name", "new pwd");
+        final var updateRequest =
+                put(BASE_URL + USER_CONTROLLER_PATH + ID, userId)
                 .content(asJson(userDto))
                 .contentType(APPLICATION_JSON);
 
@@ -159,7 +165,7 @@ public final class UserControllerIT {
         utils.regDefaultUser();
         final Long userId = userRepository.findByEmail(TEST_USERNAME).get().getId();
 
-        utils.perform(MockMvcRequestBuilders.delete(BASE_URL + UserController.USER_CONTROLLER_PATH + UserController.ID, userId), TEST_USERNAME)
+        utils.perform(delete(BASE_URL + USER_CONTROLLER_PATH + ID, userId), TEST_USERNAME)
                 .andExpect(status().isOk());
         assertEquals(0, userRepository.count());
     }
@@ -175,7 +181,7 @@ public final class UserControllerIT {
         ));
         final Long userId = userRepository.findByEmail(TEST_USERNAME).get().getId();
 
-        utils.perform(MockMvcRequestBuilders.delete(BASE_URL + UserController.USER_CONTROLLER_PATH + UserController.ID, userId), TEST_USERNAME_2)
+        utils.perform(delete(BASE_URL + USER_CONTROLLER_PATH + ID, userId), TEST_USERNAME_2)
                 .andExpect(status().isForbidden());
         assertEquals(2, userRepository.count());
     }

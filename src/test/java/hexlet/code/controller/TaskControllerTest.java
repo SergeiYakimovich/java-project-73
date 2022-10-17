@@ -17,6 +17,7 @@ import hexlet.code.utils.TestUtils;
 import java.util.List;
 
 import static hexlet.code.controller.TaskController.TASK_CONTROLLER_PATH;
+import static hexlet.code.controller.UserController.ID;
 import static hexlet.code.utils.TestUtils.BASE_URL;
 import static hexlet.code.utils.TestUtils.TEST_USERNAME;
 import static hexlet.code.utils.TestUtils.asJson;
@@ -64,7 +65,8 @@ public class TaskControllerTest {
         utils.regDefaultTask(TEST_USERNAME);
         final Task expectedTask = taskRepository.findAll().get(0);
         final var response = utils.perform(
-                        get(BASE_URL + TASK_CONTROLLER_PATH + UserController.ID, expectedTask.getId()), TEST_USERNAME)
+                        get(BASE_URL + TASK_CONTROLLER_PATH + ID,
+                                expectedTask.getId()), TEST_USERNAME)
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse();
@@ -80,7 +82,7 @@ public class TaskControllerTest {
         utils.regDefaultTask(TEST_USERNAME);
         final Task expectedTask = taskRepository.findAll().get(0);
         Exception exception = assertThrows(
-                Exception.class, () -> utils.perform(get(BASE_URL + TASK_CONTROLLER_PATH + UserController.ID,
+                Exception.class, () -> utils.perform(get(BASE_URL + TASK_CONTROLLER_PATH + ID,
                         expectedTask.getId()))
         );
         String message = exception.getMessage();
@@ -120,7 +122,7 @@ public class TaskControllerTest {
                 null,
                 task.getExecutor().getId()
         );
-        final var updateRequest = put(BASE_URL + TASK_CONTROLLER_PATH + UserController.ID,
+        final var updateRequest = put(BASE_URL + TASK_CONTROLLER_PATH + ID,
                 taskId)
                 .content(asJson(newTaskDto))
                 .contentType(APPLICATION_JSON);
@@ -136,7 +138,7 @@ public class TaskControllerTest {
         utils.regDefaultTask(TEST_USERNAME);
         final Long taskId = taskRepository.findAll().get(0).getId();
 
-        utils.perform(delete(BASE_URL + TASK_CONTROLLER_PATH + UserController.ID, taskId), TEST_USERNAME)
+        utils.perform(delete(BASE_URL + TASK_CONTROLLER_PATH + ID, taskId), TEST_USERNAME)
                 .andExpect(status().isOk());
         assertEquals(0, taskRepository.count());
     }
@@ -146,7 +148,7 @@ public class TaskControllerTest {
         utils.regDefaultTask(TEST_USERNAME);
         final Long taskId = taskRepository.findAll().get(0).getId() + 1;
 
-        utils.perform(delete(BASE_URL + TASK_CONTROLLER_PATH + UserController.ID, taskId), TEST_USERNAME)
+        utils.perform(delete(BASE_URL + TASK_CONTROLLER_PATH + ID, taskId), TEST_USERNAME)
                 .andExpect(status().isNotFound());
         assertEquals(1, taskRepository.count());
     }

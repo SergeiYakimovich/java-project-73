@@ -15,10 +15,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
 
+import static hexlet.code.controller.LabelController.LABEL_CONTROLLER_PATH;
+import static hexlet.code.controller.UserController.ID;
+import static hexlet.code.utils.TestUtils.BASE_URL;
+import static hexlet.code.utils.TestUtils.TEST_USERNAME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -54,17 +57,18 @@ public class LabelControllerTest {
     public void registration() throws Exception {
         assertEquals(0, labelRepository.count());
         utils.regDefaultUser();
-        utils.regDefaultLabel(TestUtils.TEST_USERNAME).andExpect(status().isCreated());
+        utils.regDefaultLabel(TEST_USERNAME).andExpect(status().isCreated());
         assertEquals(1, labelRepository.count());
     }
 
     @Test
     public void getLabelById() throws Exception {
         utils.regDefaultUser();
-        utils.regDefaultLabel(TestUtils.TEST_USERNAME);
+        utils.regDefaultLabel(TEST_USERNAME);
         final Label expectedLabel = labelRepository.findAll().get(0);
         final var response = utils.perform(
-                        get(TestUtils.BASE_URL + LabelController.LABEL_CONTROLLER_PATH + UserController.ID, expectedLabel.getId()), TestUtils.TEST_USERNAME)
+                        get(BASE_URL + LABEL_CONTROLLER_PATH + ID,
+                                expectedLabel.getId()), TEST_USERNAME)
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse();
@@ -79,10 +83,10 @@ public class LabelControllerTest {
     @Test
     public void getLabelByIdFails() throws Exception {
         utils.regDefaultUser();
-        utils.regDefaultLabel(TestUtils.TEST_USERNAME);
+        utils.regDefaultLabel(TEST_USERNAME);
         final Label expectedLabel = labelRepository.findAll().get(0);
         Exception exception = assertThrows(
-                Exception.class, () -> utils.perform(get(TestUtils.BASE_URL + LabelController.LABEL_CONTROLLER_PATH + UserController.ID,
+                Exception.class, () -> utils.perform(get(BASE_URL + LABEL_CONTROLLER_PATH + ID,
                         expectedLabel.getId()))
         );
         String message = exception.getMessage();
@@ -92,8 +96,9 @@ public class LabelControllerTest {
     @Test
     public void getAllLabels() throws Exception {
         utils.regDefaultUser();
-        utils.regDefaultLabel(TestUtils.TEST_USERNAME);
-        final var response = utils.perform(MockMvcRequestBuilders.get(TestUtils.BASE_URL + LabelController.LABEL_CONTROLLER_PATH), TestUtils.TEST_USERNAME)
+        utils.regDefaultLabel(TEST_USERNAME);
+        final var response = utils.perform(
+                get(BASE_URL + LABEL_CONTROLLER_PATH), TEST_USERNAME)
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse();
@@ -106,8 +111,8 @@ public class LabelControllerTest {
     @Test
     public void twiceRegTheSameLabelFail() throws Exception {
         utils.regDefaultUser();
-        utils.regDefaultLabel(TestUtils.TEST_USERNAME).andExpect(status().isCreated());
-        utils.regDefaultLabel(TestUtils.TEST_USERNAME).andExpect(status().isUnprocessableEntity());
+        utils.regDefaultLabel(TEST_USERNAME).andExpect(status().isCreated());
+        utils.regDefaultLabel(TEST_USERNAME).andExpect(status().isUnprocessableEntity());
 
         assertEquals(1, labelRepository.count());
     }
@@ -115,16 +120,16 @@ public class LabelControllerTest {
     @Test
     public void updateLabel() throws Exception {
         utils.regDefaultUser();
-        utils.regDefaultLabel(TestUtils.TEST_USERNAME);
+        utils.regDefaultLabel(TEST_USERNAME);
         final Long labelId = labelRepository.findAll().get(0).getId();
         final var labelDto = new LabelDto(TestUtils.TEST_LABELNAME_2);
 
-        final var updateRequest = MockMvcRequestBuilders.put(TestUtils.BASE_URL + LabelController.LABEL_CONTROLLER_PATH + UserController.ID,
-                labelId)
+        final var updateRequest =
+                put(BASE_URL + LABEL_CONTROLLER_PATH + ID, labelId)
                 .content(TestUtils.asJson(labelDto))
                 .contentType(APPLICATION_JSON);
 
-        utils.perform(updateRequest, TestUtils.TEST_USERNAME).andExpect(status().isOk());
+        utils.perform(updateRequest, TEST_USERNAME).andExpect(status().isOk());
         assertTrue(labelRepository.existsById(labelId));
         assertNull(labelRepository.findByName(TestUtils.TEST_LABELNAME).orElse(null));
         assertNotNull(labelRepository.findByName(TestUtils.TEST_LABELNAME_2).orElse(null));
@@ -133,10 +138,10 @@ public class LabelControllerTest {
     @Test
     public void deleteLabel() throws Exception {
         utils.regDefaultUser();
-        utils.regDefaultLabel(TestUtils.TEST_USERNAME);
+        utils.regDefaultLabel(TEST_USERNAME);
         final Long labelId = labelRepository.findAll().get(0).getId();
 
-        utils.perform(MockMvcRequestBuilders.delete(TestUtils.BASE_URL + LabelController.LABEL_CONTROLLER_PATH + UserController.ID, labelId), TestUtils.TEST_USERNAME)
+        utils.perform(delete(BASE_URL + LABEL_CONTROLLER_PATH + ID, labelId), TEST_USERNAME)
                 .andExpect(status().isOk());
         assertEquals(0, labelRepository.count());
     }
@@ -144,9 +149,9 @@ public class LabelControllerTest {
     @Test
     public void deleteLabelFails() throws Exception {
         utils.regDefaultUser();
-        utils.regDefaultLabel(TestUtils.TEST_USERNAME);
+        utils.regDefaultLabel(TEST_USERNAME);
         final Long labelId = labelRepository.findAll().get(0).getId() + 1;
-        utils.perform(MockMvcRequestBuilders.delete(TestUtils.BASE_URL + LabelController.LABEL_CONTROLLER_PATH + UserController.ID, labelId), TestUtils.TEST_USERNAME)
+        utils.perform(delete(BASE_URL + LABEL_CONTROLLER_PATH + ID, labelId), TEST_USERNAME)
                 .andExpect(status().isNotFound());
         assertEquals(1, labelRepository.count());
     }

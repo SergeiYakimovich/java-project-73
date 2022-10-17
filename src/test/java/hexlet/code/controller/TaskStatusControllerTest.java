@@ -14,10 +14,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import hexlet.code.utils.TestUtils;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
 
+import static hexlet.code.controller.TaskStatusController.STATUS_CONTROLLER_PATH;
+import static hexlet.code.controller.UserController.ID;
 import static hexlet.code.utils.TestUtils.BASE_URL;
 import static hexlet.code.utils.TestUtils.TEST_STATUSNAME;
 import static hexlet.code.utils.TestUtils.TEST_STATUSNAME_2;
@@ -69,7 +70,8 @@ public class TaskStatusControllerTest {
         utils.regDefaultStatus(TEST_USERNAME);
         final TaskStatus expectedTaskStatus = taskStatusRepository.findAll().get(0);
         final var response = utils.perform(
-                        get(BASE_URL + TaskStatusController.STATUS_CONTROLLER_PATH + UserController.ID, expectedTaskStatus.getId()), TEST_USERNAME)
+                        get(BASE_URL + STATUS_CONTROLLER_PATH + ID,
+                                expectedTaskStatus.getId()), TEST_USERNAME)
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse();
@@ -87,7 +89,7 @@ public class TaskStatusControllerTest {
         final TaskStatus expectedStatus = taskStatusRepository.findAll().get(0);
 
         Exception exception = assertThrows(
-                Exception.class, () -> utils.perform(get(BASE_URL + TaskStatusController.STATUS_CONTROLLER_PATH + UserController.ID,
+                Exception.class, () -> utils.perform(get(BASE_URL + STATUS_CONTROLLER_PATH + ID,
                         expectedStatus.getId()))
         );
         String message = exception.getMessage();
@@ -98,7 +100,8 @@ public class TaskStatusControllerTest {
     public void getAllStatuses() throws Exception {
         utils.regDefaultUser();
         utils.regDefaultStatus(TEST_USERNAME);
-        final var response = utils.perform(MockMvcRequestBuilders.get(BASE_URL + TaskStatusController.STATUS_CONTROLLER_PATH), TEST_USERNAME)
+        final var response = utils.perform(
+                get(BASE_URL + STATUS_CONTROLLER_PATH), TEST_USERNAME)
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse();
@@ -123,7 +126,8 @@ public class TaskStatusControllerTest {
         utils.regDefaultStatus(TEST_USERNAME);
         final Long statusId = taskStatusRepository.findAll().get(0).getId();
         final var statusDto = new TaskStatusDto(TEST_STATUSNAME_2);
-        final var updateRequest = MockMvcRequestBuilders.put(BASE_URL + TaskStatusController.STATUS_CONTROLLER_PATH + UserController.ID, statusId)
+        final var updateRequest =
+                put(BASE_URL + STATUS_CONTROLLER_PATH + ID, statusId)
                 .content(asJson(statusDto))
                 .contentType(APPLICATION_JSON);
 
@@ -139,7 +143,7 @@ public class TaskStatusControllerTest {
         utils.regDefaultStatus(TEST_USERNAME);
         final Long statusId = taskStatusRepository.findAll().get(0).getId();
 
-        utils.perform(MockMvcRequestBuilders.delete(BASE_URL + TaskStatusController.STATUS_CONTROLLER_PATH + UserController.ID, statusId), TEST_USERNAME)
+        utils.perform(delete(BASE_URL + STATUS_CONTROLLER_PATH + ID, statusId), TEST_USERNAME)
                 .andExpect(status().isOk());
         assertEquals(0, taskStatusRepository.count());
     }
@@ -150,7 +154,7 @@ public class TaskStatusControllerTest {
         utils.regDefaultStatus(TEST_USERNAME);
         final Long statusId = taskStatusRepository.findAll().get(0).getId() + 1;
 
-        utils.perform(MockMvcRequestBuilders.delete(BASE_URL + TaskStatusController.STATUS_CONTROLLER_PATH + UserController.ID, statusId), TEST_USERNAME)
+        utils.perform(delete(BASE_URL + STATUS_CONTROLLER_PATH + ID, statusId), TEST_USERNAME)
                 .andExpect(status().isNotFound());
         assertEquals(1, taskStatusRepository.count());
     }
