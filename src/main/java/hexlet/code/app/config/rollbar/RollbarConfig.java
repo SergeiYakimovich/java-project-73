@@ -15,7 +15,6 @@ public class RollbarConfig {
     // Добавляем токен через переменные окружения
     @Value("${rollbar_token:}")
     private String rollbarToken;
-
     @Value("${spring.profiles.active:}")
     private String activeProfile;
 
@@ -28,8 +27,7 @@ public class RollbarConfig {
 
         return RollbarSpringConfigBuilder.withAccessToken(accessToken)
                 .environment("development")
-                .enabled(activeProfile == "prod")
-//                .enabled(Objects.equals(activeProfile, "prod"))
+                .enabled(activeProfile.equals("prod"))
                 .build();
     }
 

@@ -8,3 +8,6 @@
 
 ### App on Heroku:
 https://evening-chamber-83884.herokuapp.com/
+
+### Documentation:
+https://evening-chamber-83884.herokuapp.com/swagger-ui.html

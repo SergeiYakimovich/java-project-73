@@ -7,7 +7,6 @@ import hexlet.code.app.dto.UserDto;
 import hexlet.code.app.model.User;
 import hexlet.code.app.repository.UserRepository;
 import hexlet.code.app.utils.TestUtils;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

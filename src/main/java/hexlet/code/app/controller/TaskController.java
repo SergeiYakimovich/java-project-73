@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
+import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;
+import com.querydsl.core.types.Predicate;
 
 import static org.springframework.http.HttpStatus.CREATED;
 
@@ -54,10 +56,8 @@ public class TaskController {
     ))
     @GetMapping
     @Operation(summary = "Get all tasks")
-    public List<Task> getAllTasks() {
-        return taskRepository.findAll()
-                .stream()
-                .toList();
+    public List<Task> getAllTasks(@QuerydslPredicate final Predicate predicate) {
+        return predicate == null ? taskRepository.findAll() : taskRepository.findAll(predicate);
     }
 
     @ApiResponses(@ApiResponse(responseCode = "200"))
@@ -75,6 +75,7 @@ public class TaskController {
     }
 
     @DeleteMapping(ID)
+    @Operation(summary = "Delete task")
     @PreAuthorize(TASK_OWNER)
     public void deleteTask(@PathVariable final long id) {
         taskRepository.deleteById(id);

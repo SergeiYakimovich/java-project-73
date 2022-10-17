@@ -33,6 +33,10 @@ public class TaskStatus {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
+    @CreationTimestamp
+    @Temporal(TIMESTAMP)
+    private Date createdAt;
+
     @NotBlank
     @Column(unique = true)
     private String name;
@@ -40,10 +44,6 @@ public class TaskStatus {
     @OneToMany(mappedBy = "taskStatus")
     @JsonIgnore
     private Set<Task> tasks;
-
-    @CreationTimestamp
-    @Temporal(TIMESTAMP)
-    private Date createdAt;
 
     public TaskStatus(Long id) {
         this.id = id;

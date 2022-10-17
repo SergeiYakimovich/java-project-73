@@ -1,5 +1,6 @@
 package hexlet.code.app.controller;
 
+import com.rollbar.notifier.Rollbar;
 import hexlet.code.app.dto.UserDto;
 import hexlet.code.app.model.User;
 import hexlet.code.app.repository.UserRepository;
@@ -41,12 +42,14 @@ public class UserController {
 
     private final UserService userService;
     private final UserRepository userRepository;
+    private final Rollbar rollbar;
 
     @Operation(summary = "Create new user")
     @ApiResponse(responseCode = "201", description = "User created")
     @PostMapping
     @ResponseStatus(CREATED)
     public User registerNew(@RequestBody @Valid final UserDto dto) {
+//        rollbar.log("Create new user " + dto.getFirstName() + " " + dto.getLastName());
         return userService.createNewUser(dto);
     }
 
@@ -54,7 +57,8 @@ public class UserController {
     @Content(schema = @Schema(implementation = User.class))
     ))
     @GetMapping
-    public List<User> getAll() {
+    @Operation(summary = "Get all users")
+    public List<User> getAll() throws Exception {
         return userRepository.findAll()
                 .stream()
                 .toList();
@@ -62,17 +66,20 @@ public class UserController {
 
     @ApiResponses(@ApiResponse(responseCode = "200"))
     @GetMapping(ID)
+    @Operation(summary = "Get user")
     public User getUserById(@PathVariable final Long id) {
         return userRepository.findById(id).get();
     }
 
     @PutMapping(ID)
+    @Operation(summary = "Update user")
     @PreAuthorize(ONLY_OWNER_BY_ID)
     public User update(@PathVariable final long id, @RequestBody @Valid final UserDto dto) {
         return userService.updateUser(id, dto);
     }
 
     @DeleteMapping(ID)
+    @Operation(summary = "Delete user")
     @PreAuthorize(ONLY_OWNER_BY_ID)
     public void delete(@PathVariable final long id) throws Exception {
         final User user = userRepository.findById(id)

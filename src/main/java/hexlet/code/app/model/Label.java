@@ -32,6 +32,10 @@ public class Label {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @CreationTimestamp
+    @Temporal(TIMESTAMP)
+    private Date createdAt;
+
     @NotBlank
     @Column(unique = true)
     private String name;
@@ -39,10 +43,6 @@ public class Label {
     @ManyToMany(mappedBy = "labels")
     @JsonIgnore
     private Set<Task> tasks;
-
-    @CreationTimestamp
-    @Temporal(TIMESTAMP)
-    private Date createdAt;
 
     public Label(Long id) {
         this.id = id;

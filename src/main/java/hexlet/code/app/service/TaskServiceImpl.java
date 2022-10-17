@@ -39,7 +39,7 @@ public class TaskServiceImpl implements TaskService {
         return taskRepository.save(taskToUpdate);
     }
 
-    private Task makeTaskFromDto(final Task task,final TaskDto dto) {
+    private Task makeTaskFromDto(final Task task, final TaskDto dto) {
         task.setName(dto.getName());
         task.setDescription(dto.getDescription());
         task.setTaskStatus(new TaskStatus(dto.getTaskStatusId()));
