@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
 import javax.validation.Valid;
-import liquibase.repackaged.org.apache.commons.collections4.CollectionUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -74,7 +73,7 @@ public class TaskStatusController {
     @DeleteMapping(ID)
     public void deleteStatus(@PathVariable final long id) throws Exception {
         final TaskStatus taskStatus = taskStatusRepository.findById(id).get();
-        if (!CollectionUtils.isEmpty(taskStatus.getTasks())) {
+        if (taskStatus.getTasks() != null && taskStatus.getTasks().size() != 0) {
             throw new Exception("Статус нельзя удалить, т.к. используется в задачах");
         }
         taskStatusRepository.deleteById(id);

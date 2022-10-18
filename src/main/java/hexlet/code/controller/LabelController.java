@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import liquibase.repackaged.org.apache.commons.collections4.CollectionUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -72,8 +71,8 @@ public class LabelController {
     @Operation(summary = "Delete label")
     public void deleteLabel(@PathVariable final long id) throws Exception {
         final Label label = labelRepository.findById(id).get();
-        if (!CollectionUtils.isEmpty(label.getTasks())) {
-            throw new Exception("Нельзя удалить, т.к. используется в задачах");
+        if (label.getTasks() != null && label.getTasks().size() != 0) {
+            throw new Exception("Метку нельзя удалить, т.к. используется в задачах");
         }
         labelRepository.deleteById(id);
     }
