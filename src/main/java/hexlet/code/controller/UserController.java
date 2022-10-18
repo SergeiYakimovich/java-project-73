@@ -82,7 +82,8 @@ public class UserController {
     public void delete(@PathVariable final long id) throws Exception {
         final User user = userRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        if (user.getAuthorTasks().size() != 0 || user.getExecutorTasks().size() != 0) {
+        if ((user.getAuthorTasks() != null && user.getAuthorTasks().size() != 0)
+                || (user.getExecutorTasks() != null && user.getExecutorTasks().size() != 0)) {
             throw new Exception("Нельзя удалить, т.к. используется в задачах");
         }
         userRepository.deleteById(id);
