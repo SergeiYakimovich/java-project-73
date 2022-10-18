@@ -8,7 +8,6 @@ import hexlet.code.model.User;
 import hexlet.code.repository.TaskRepository;
 import hexlet.code.service.interfaces.TaskService;
 import hexlet.code.service.interfaces.UserService;
-import liquibase.repackaged.org.apache.commons.collections4.CollectionUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,7 +44,7 @@ public class TaskServiceImpl implements TaskService {
         }
         Set<Long> labelsIds = dto.getLabelIds();
         Set<Label> labels = null;
-        if (!CollectionUtils.isEmpty(labelsIds)) {
+        if (labelsIds != null && labelsIds.size() != 0) {
             labels = dto.getLabelIds().stream()
                     .map(Label::new)
                     .collect(Collectors.toSet());
