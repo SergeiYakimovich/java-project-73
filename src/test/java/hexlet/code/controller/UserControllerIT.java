@@ -124,6 +124,8 @@ public final class UserControllerIT {
     public void login() throws Exception {
         utils.regDefaultUser();
         final LoginDto loginDto = new LoginDto(
+                utils.getTestRegistrationDto().getFirstName(),
+                utils.getTestRegistrationDto().getLastName(),
                 utils.getTestRegistrationDto().getEmail(),
                 utils.getTestRegistrationDto().getPassword()
         );
@@ -135,6 +137,8 @@ public final class UserControllerIT {
     @Test
     public void loginFail() throws Exception {
         final LoginDto loginDto = new LoginDto(
+                utils.getTestRegistrationDto().getFirstName(),
+                utils.getTestRegistrationDto().getLastName(),
                 utils.getTestRegistrationDto().getEmail(),
                 utils.getTestRegistrationDto().getPassword()
         );
