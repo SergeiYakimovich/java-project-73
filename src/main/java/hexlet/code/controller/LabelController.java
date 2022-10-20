@@ -70,10 +70,6 @@ public class LabelController {
     @DeleteMapping(ID)
     @Operation(summary = "Delete label")
     public void deleteLabel(@PathVariable final long id) throws Exception {
-        final Label label = labelRepository.findById(id).get();
-        if (label.getTasks() != null && label.getTasks().size() != 0) {
-            throw new Exception("Метку нельзя удалить, т.к. используется в задачах");
-        }
         labelRepository.deleteById(id);
     }
 

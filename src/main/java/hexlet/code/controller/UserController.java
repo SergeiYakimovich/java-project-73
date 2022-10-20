@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -80,12 +79,6 @@ public class UserController {
     @Operation(summary = "Delete user")
     @PreAuthorize(ONLY_OWNER_BY_ID)
     public void delete(@PathVariable final long id) throws Exception {
-        final User user = userRepository.findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        if ((user.getAuthorTasks() != null && user.getAuthorTasks().size() != 0)
-                || (user.getExecutorTasks() != null && user.getExecutorTasks().size() != 0)) {
-            throw new Exception("Нельзя удалить, т.к. используется в задачах");
-        }
         userRepository.deleteById(id);
     }
 

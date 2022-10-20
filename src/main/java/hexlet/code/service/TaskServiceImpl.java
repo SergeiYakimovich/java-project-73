@@ -11,6 +11,8 @@ import hexlet.code.service.interfaces.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -24,24 +26,25 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Task createNewTask(final TaskDto dto) {
-        final Task newTask = makeTaskFromDto(new Task(), dto);
+        final Task newTask = fromDto(dto);
         return taskRepository.save(newTask);
     }
 
     @Override
     public Task updateTask(final long id, final TaskDto dto) {
-        final Task taskToUpdate = makeTaskFromDto(taskRepository.findById(id).get(), dto);
+        final Task taskToUpdate = fromDto(dto);
+        taskToUpdate.setId(id);
         return taskRepository.save(taskToUpdate);
     }
 
-    private Task makeTaskFromDto(final Task task, final TaskDto dto) {
-        task.setName(dto.getName());
-        task.setDescription(dto.getDescription());
-        task.setTaskStatus(new TaskStatus(dto.getTaskStatusId()));
-        task.setAuthor(userService.getCurrentUser());
-        if (dto.getExecutorId() != null) {
-            task.setExecutor(new User(dto.getExecutorId()));
-        }
+    private Task fromDto(final TaskDto dto) {
+        final User author = userService.getCurrentUser();
+        final User executor = Optional.ofNullable(dto.getExecutorId())
+                .map(User::new)
+                .orElse(null);
+        final TaskStatus taskStatus = Optional.ofNullable(dto.getTaskStatusId())
+                .map(TaskStatus::new)
+                .orElse(null);
         Set<Long> labelsIds = dto.getLabelIds();
         Set<Label> labels = null;
         if (labelsIds != null && labelsIds.size() != 0) {
@@ -49,8 +52,14 @@ public class TaskServiceImpl implements TaskService {
                     .map(Label::new)
                     .collect(Collectors.toSet());
         }
-        task.setLabels(labels);
-        return task;
+        return Task.builder()
+                .author(author)
+                .executor(executor)
+                .taskStatus(taskStatus)
+                .labels(labels)
+                .name(dto.getName())
+                .description(dto.getDescription())
+                .build();
     }
 
 }

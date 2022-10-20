@@ -72,10 +72,6 @@ public class TaskStatusController {
     @Operation(summary = "Delete status")
     @DeleteMapping(ID)
     public void deleteStatus(@PathVariable final long id) throws Exception {
-        final TaskStatus taskStatus = taskStatusRepository.findById(id).get();
-        if (taskStatus.getTasks() != null && taskStatus.getTasks().size() != 0) {
-            throw new Exception("Статус нельзя удалить, т.к. используется в задачах");
-        }
         taskStatusRepository.deleteById(id);
     }
 

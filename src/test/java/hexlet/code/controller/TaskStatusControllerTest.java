@@ -155,7 +155,7 @@ public class TaskStatusControllerTest {
         final Long statusId = taskStatusRepository.findAll().get(0).getId() + 1;
 
         utils.perform(delete(BASE_URL + STATUS_CONTROLLER_PATH + ID, statusId), TEST_USERNAME)
-                .andExpect(status().isNotFound());
+                .andExpect(status().isInternalServerError());
         assertEquals(1, taskStatusRepository.count());
     }
 
