@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -45,13 +46,13 @@ public class TaskServiceImpl implements TaskService {
         final TaskStatus taskStatus = Optional.ofNullable(dto.getTaskStatusId())
                 .map(TaskStatus::new)
                 .orElse(null);
-        Set<Long> labelsIds = dto.getLabelIds();
-        Set<Label> labels = null;
-        if (labelsIds != null && labelsIds.size() != 0) {
-            labels = dto.getLabelIds().stream()
-                    .map(Label::new)
-                    .collect(Collectors.toSet());
-        }
+        final Set<Label> labels = Optional.ofNullable(dto.getLabelIds())
+                .orElse(Set.of())
+                .stream()
+                .filter(Objects::nonNull)
+                .map(Label::new)
+                .collect(Collectors.toSet());
+
         return Task.builder()
                 .author(author)
                 .executor(executor)
